@@ -280,13 +280,11 @@ class EventSourceDelegate: NSObject, URLSessionDataDelegate {
         // swiftlint:disable:next force_cast
         let httpResponse = response as! HTTPURLResponse
         switch httpResponse.statusCode {
-        case 200..<300:
+        case 200..<204, 205..<300:
             reconnectionTimer.connectedTime = Date()
             readyState = .open
             config.handler.onOpened()
             completionHandler(.allow)
-        case 204:
-            fallthrough
         default:
             logger.log(.info, "Unsuccessful response: %d", httpResponse.statusCode)
             if dispatchError(error: UnsuccessfulResponseError(responseCode: httpResponse.statusCode)) == .shutdown {
